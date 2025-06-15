@@ -34,6 +34,35 @@ export default function AIChatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  // Handle mobile keyboard and viewport
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleResize = () => {
+      // Force scroll to bottom on mobile when keyboard appears/disappears
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    };
+
+    const handleFocus = () => {
+      // On mobile, scroll to bottom when input is focused
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 300); // Wait for keyboard animation
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    inputRef.current?.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      inputRef.current?.removeEventListener('focus', handleFocus);
+    };
+  }, [isOpen]);
+
   const generateAIResponse = async (userMessage) => {
     try {
       const response = await fetch('/api/chat', {
@@ -176,9 +205,9 @@ export default function AIChatbot() {
         </div>
       )}
 
-             {/* Compact Chat Interface */}
+             {/* Mobile-Optimized Chat Interface */}
        {isOpen && (
-         <div className="fixed bottom-6 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] h-[480px] max-h-[calc(100vh-3rem)]">
+         <div className="fixed bottom-6 right-6 z-[9999] w-80 max-w-[calc(100vw-1.5rem)] h-[480px] max-h-[calc(100vh-8rem)] md:max-h-[calc(100vh-3rem)]">
            <Card className="h-full bg-white/95 backdrop-blur-lg border-2 border-pink-200 shadow-2xl rounded-2xl overflow-hidden relative">
              {/* Compact Header with Close Button */}
              <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-r from-pink-400 to-purple-500 p-3 rounded-t-2xl">
@@ -201,8 +230,8 @@ export default function AIChatbot() {
              </div>
 
              <CardContent className="p-0 h-full flex flex-col bg-gradient-to-b from-pink-50/30 to-purple-50/30 pt-12">
-                            {/* Compact Messages Area */}
-              <ScrollArea className="flex-1 p-3 max-h-[320px]">
+                            {/* Mobile-Optimized Messages Area */}
+              <ScrollArea className="flex-1 p-3 max-h-[280px] overflow-y-auto overscroll-contain">
                 <div className="space-y-3">
                   {messages.map((message, index) => (
                     <div
@@ -256,8 +285,8 @@ export default function AIChatbot() {
 
               <Separator className="bg-gradient-to-r from-pink-200 via-purple-200 to-rose-200 h-0.5" />
 
-              {/* Compact Input Area */}
-              <div className="p-3 bg-white/80">
+              {/* Mobile-Safe Input Area */}
+              <div className="p-3 bg-white/80 sticky bottom-0">
                 <div className="flex space-x-2">
                   <div className="flex-1 relative">
                     <textarea
@@ -270,6 +299,7 @@ export default function AIChatbot() {
                       rows="1"
                       disabled={isLoading}
                       autoFocus={isOpen}
+                      style={{ fontSize: '16px' }} // Prevents zoom on iOS
                     />
                     <div className="absolute bottom-1 right-1 text-pink-400">
                       <Heart className="h-3 w-3" />
