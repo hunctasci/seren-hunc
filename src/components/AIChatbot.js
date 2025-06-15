@@ -11,10 +11,11 @@ import { Heart, MessageCircle, Send, X, Sparkles, Bot, HelpCircle, Zap } from 'l
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null); // 'hunc' or 'seren'
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "💕 Hi there! I'm your personal Cosmic Love Advisor, specially trained on Hunç & Seren's astrological compatibility. I'm here to help you navigate your beautiful relationship journey using the wisdom of the stars! ✨\n\nFeel free to ask me anything about your relationship, from handling challenges to celebrating your strengths. How can I guide you today?"
+      content: "💕 Hello! I'm your personal Cosmic Love Advisor, specially trained on Hunç & Seren's astrological compatibility. I'm here to help you with your beautiful relationship! ✨\n\nFirst, let me know who I'm talking to so I can give you the best personalized advice:\n\n🌟 Type **Hunç** if you're Hunç\n🌟 Type **Seren** if you're Seren\n\nOnce I know who you are, I can provide tailored guidance based on your unique astrological personality!"
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
@@ -40,7 +41,10 @@ export default function AIChatbot() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ 
+          message: userMessage,
+          currentUser: currentUser 
+        }),
       });
 
       const data = await response.json();
@@ -61,6 +65,35 @@ export default function AIChatbot() {
 
     const userMessageContent = inputMessage.trim();
     const newMessage = { role: 'user', content: userMessageContent };
+    
+    // Check if user is identifying themselves
+    if (!currentUser) {
+      const message = userMessageContent.toLowerCase();
+      if (message.includes('hunç') || message.includes('hunc')) {
+        setCurrentUser('hunc');
+        setMessages(prev => [...prev, newMessage, {
+          role: 'assistant',
+          content: "🦂 Hello Hunç! As a Scorpio Sun with Cancer Moon and Aquarius Rising, I understand your deep emotional nature and need for both intensity and independence. I'm here to help you navigate your relationship with Seren using insights from your astrological compatibility. ✨\n\nWhat would you like to know about your relationship today?"
+        }]);
+        setInputMessage('');
+        return;
+      } else if (message.includes('seren')) {
+        setCurrentUser('seren');
+        setMessages(prev => [...prev, newMessage, {
+          role: 'assistant',
+          content: "♍ Hello Seren! As a Virgo Sun with Gemini Moon and Aquarius Rising, I appreciate your analytical nature and need for both intellectual stimulation and practical solutions. I'm here to help you understand your beautiful connection with Hunç through your astrological compatibility. ✨\n\nWhat can I help you with in your relationship?"
+        }]);
+        setInputMessage('');
+        return;
+      } else {
+        setMessages(prev => [...prev, newMessage, {
+          role: 'assistant',
+          content: "I didn't catch that! Please let me know who you are by typing either:\n\n🌟 **Hunç** if you're Hunç\n🌟 **Seren** if you're Seren\n\nThis will help me give you personalized advice! 💕"
+        }]);
+        setInputMessage('');
+        return;
+      }
+    }
     
     // Add user message and clear input immediately
     setMessages(prev => [...prev, newMessage]);

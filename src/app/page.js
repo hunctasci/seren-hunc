@@ -583,6 +583,6 @@ export default function AstrologicalReport() {
        
        {/* AI Chatbot */}
        <AIChatbot />
-     </div>
-   );
- }
+    </div>
+  );
+}
