@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Heart, Star, Moon, Sun, Calendar, Users, TrendingUp, Home, DollarSign, Baby, Briefcase } from 'lucide-react';
 import data from '../../data/data.json';
+import AIChatbot from '../components/AIChatbot';
 
 export default function AstrologicalReport() {
   const [activeSection, setActiveSection] = useState('overview');
@@ -570,15 +571,18 @@ export default function AstrologicalReport() {
         </Tabs>
       </div>
 
-      {/* Footer */}
-      <div className="bg-gradient-to-r from-pink-500 via-purple-600 to-rose-500 text-white py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <Heart className="h-8 w-8 text-pink-200 mx-auto mb-4 animate-pulse" />
-          <p className="text-pink-100">
-            Created with love for Hunç & Seren's cosmic journey together ✨
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+             {/* Footer */}
+       <div className="bg-gradient-to-r from-pink-500 via-purple-600 to-rose-500 text-white py-8 mt-12">
+         <div className="container mx-auto px-4 text-center">
+           <Heart className="h-8 w-8 text-pink-200 mx-auto mb-4 animate-pulse" />
+           <p className="text-pink-100">
+             Created with love for Hunç & Seren's cosmic journey together ✨
+           </p>
+         </div>
+       </div>
+       
+       {/* AI Chatbot */}
+       <AIChatbot />
+     </div>
+   );
+ }
